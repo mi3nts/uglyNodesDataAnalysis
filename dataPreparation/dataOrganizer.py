@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-# uglyNodes(Waggle) Data Organizer
-# auther: Lakitha Wijeratne
+# uglyNodes(Waggle)dataOrganizer
+# author: Lakitha Wijeratne
 # date: October 6th 2018
 
 import csv
