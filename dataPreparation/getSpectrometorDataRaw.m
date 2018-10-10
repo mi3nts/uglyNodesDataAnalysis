@@ -1,12 +1,12 @@
-function spectrometorData  = getSpectrometorData(fileName,startTime,endTime)
+function spectrometorData  = getSpectrometorDataRaw(fileName,startTime,endTime)
 
 loadName=strcat('../../../data/spectrometor/',fileName);
   
-load(loadName)
+load(loadName);
 
 Spectrometor_Data .Properties.VariableNames{'Dates_S'} = 'dateTime';
 
-spectrometorTT = table2timetable(Spectrometor_Data);
+spectrometorData = table2timetable(Spectrometor_Data);
 
 % dt = seconds(10);
 % TT2 = retime(spectrometorTT,'regular','linear','TimeStep',dt,'Constant',-1);
@@ -15,7 +15,7 @@ spectrometorTT = table2timetable(Spectrometor_Data);
 % newTimes.Second    = roundn(newTimes.Second, 1);
 
 
-spectrometorData = getOrderedTimeTable(spectrometorTT);
+
 
 % figure
 % plot(spectrometorData.dateTime,spectrometorData.pm1_Spectrometor,'r.')

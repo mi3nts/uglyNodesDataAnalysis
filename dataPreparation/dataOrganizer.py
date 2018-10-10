@@ -32,6 +32,10 @@ def main(argv):
             finish = time.time()
             print('Time elapsed for Node 001e0610'+nodeID+ ": "+ str(finish - start))
 
+def getfileListforNode(nodeID):
+    dirPath = "../../../Data/UglyNodes/'+ nodeID +".csv"
+
+
 
 def getListDictionary(nodeID):
 
