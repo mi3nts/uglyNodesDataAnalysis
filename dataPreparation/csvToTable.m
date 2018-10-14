@@ -4,7 +4,9 @@ function [currentTable] = csvToTable(filePath)
 
 % [fileDirectory,fileName,fileExtension]=fileparts(filePath)
 
-currentTable = readtable(filePath);
+currentTable = readtable(filePath,'Format','%s %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f');
+
+
 % currentStructure =  table2struct(currentTable);
 
 end

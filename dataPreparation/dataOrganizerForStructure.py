@@ -22,8 +22,8 @@ def main(argv):
         elif opt in ("-d", "--dfolder"):
             dataFolder = arg
             start = time.time()
-            # nodeList = ['001e0610c040','001e0610c2e5','001e0610c2dd',\
-            nodeList = ['001e0610c5fa','001e0610c069','001e0610c0ea','001e0610c219',\
+            nodeList = ['001e0610c040','001e0610c2e5','001e0610c2dd',\
+            '001e0610c5fa','001e0610c069','001e0610c0ea','001e0610c219',\
             '001e0610c042','001e0610c776','001e0610c0ef','001e0610c762',\
             '001e0610c2eb','001e0610c2e9','001e0610c2e3','001e0610c42e',\
             '001e0610c2df','001e0610c429','001e0610c06b','001e0610c2db',\
@@ -52,12 +52,6 @@ def main(argv):
                      'tsl250rd_intensity',\
                      'tsl260rd_intensity',\
                      'tsys01_temperature',\
-                     'pm1_Spectrometor',\
-                     'pm2_5_Spectrometor',\
-                     'pm10_Spectrometor',\
-                     'Alveolic',\
-                     'Thoracic',\
-                     'Inhalable',\
                      ])
 
             print('Listing Files')

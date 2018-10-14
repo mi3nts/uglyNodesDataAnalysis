@@ -8,8 +8,8 @@ close all
 % startTime = datetime(2016,01,01,0,0,0);
 % endTime   = datetime(2018,09,7,0,0,0);
 
-startTime = datetime(2018,01,23,0,0,0);
-endTime   = datetime(2018,01,29,0,0,0);
+startTime = datetime(2018,09,01,0,0,0);
+endTime   = datetime(2018,09,31,0,0,0);
 
 
 timeRange= [startTime:day(1):endTime]
@@ -40,7 +40,7 @@ for dayRange=1:length(timeRange)
             currentTimeTable.gps_latitude(:) = 35.0427;
             currentTimeTable.gps_longitude(:) = -85.3057;
         end                
-        currentStructure  = table2struct(currentTimeTable) ;
+        currentStructure  = table2struct(timetable2table(currentTimeTable)) ;
         existFolder = strsplit(filePath,'.csv')       ;
         outPut =strcat(existFolder{1},'.mat') ;
         save(outPut,'currentTimeTable','currentStructure')      ;
