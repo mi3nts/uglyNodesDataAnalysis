@@ -1,10 +1,10 @@
-function mixedData = tableMixer(spectrometorData,uglyNodeData)
+function mixedData = tableMixer(spectrometorData,uglyNodeData,period)
 % mixedDataPre = outerjoin(spectrometorData,uglyNodeData);
     alphaSenseData     =   uglyNodeData(:,1:21);
     coreSenseData      =   uglyNodeData(:,22:end);
     alphaAndCoreData   =   onlyKeepFirst(alphaSenseData,coreSenseData );
-    alphaAndCoreData   =  timeNearest(alphaAndCoreData,10);
-    spectrometorData   =  timeNearest(spectrometorData,10);
+    alphaAndCoreData   =  timeNearest(alphaAndCoreData,period);
+    spectrometorData   =  timeNearest(spectrometorData,period);
 
     %% Getting Unique Datetimes 
 
@@ -17,7 +17,7 @@ function mixedData = tableMixer(spectrometorData,uglyNodeData)
     end
 
 
-mixedData          =   innerjoin(spectrometorData,alphaAndCoreData);
+mixedData          =   innerjoin(alphaAndCoreData,spectrometorData);
 % spectrometorData 
 
 
