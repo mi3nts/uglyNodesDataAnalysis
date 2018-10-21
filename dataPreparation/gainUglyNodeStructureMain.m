@@ -4,12 +4,12 @@ clear all
 close all 
 
 %% Assignments 
-% 
-startTime = datetime(2016,01,01,0,0,0);
-% % endTime   = datetime(2018,09,15,0,0,0);
-% 
+% % 
+% startTime = datetime(2016,01,01,0,0,0);
+% endTime   = datetime(2018,10,15,0,0,0);
+%  
 % startTime = datetime(2018,09,15,0,0,0);
-endTime   = datetime(2018,10,15,0,0,0);
+% endTime   = datetime(2018,10,15,0,0,0);
 
 
 timeRange= [startTime:day(1):endTime]
@@ -31,14 +31,14 @@ for dayRange=1:length(timeRange)
     if(isfile(filePath))
         currentTable = csvToTable(filePath);
         nodeData = tableToTT(currentTable) ;
-        if (timeRange(dayRange)<=datetime(2018,04,10))
+        if (timeRange(dayRange)<=datetime(2018,9,12))
             nodeData.gps_altitude(:)  =  220.675;
             nodeData.gps_latitude(:)  =  32.992006; 
             nodeData.gps_longitude(:) = -96.757806;
         else
-            nodeData.gps_altitude(:) = 224.9 ; 
-            nodeData.gps_latitude(:) = 35.0427;
-            nodeData.gps_longitude(:) = -85.3057;
+            nodeData.gps_altitude(:)  = 219.00 ; 
+            nodeData.gps_latitude(:)  = 33.027222;
+            nodeData.gps_longitude(:) = -96.750639;
         end                
         currentStructure  = table2struct(timetable2table(nodeData)) ;
         existFolder = strsplit(filePath,'-Organized.csv')       ;
@@ -46,9 +46,9 @@ for dayRange=1:length(timeRange)
         save(outPut,'nodeData')      ;
     end
     
-    
-    
 end
+
+
 
 
 

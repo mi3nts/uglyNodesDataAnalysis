@@ -51,9 +51,9 @@ def main():
              'tsys01_temperature',\
              ])
 
-    # start = time.time()
-    # downloadFile(url,localLocation)
-    # timeTaken('Data Downloaded in ',start)
+    start = time.time()
+    downloadFile(url,localLocation)
+    timeTaken('Data Downloaded in ',start)
 
     start = time.time()
     unzipFile(localLocation)
@@ -224,7 +224,7 @@ def unzipper(localLocation):
 
 def unzipFile(localLocation):
   unzipper(localLocation)
-  sourceName = os.path.dirname(localLocation)+'/GASP.complete.'+datetime.datetime.utcnow().strftime('%Y-%m-%d') 
+  sourceName = os.path.dirname(localLocation)+'/GASP.complete.'+datetime.datetime.utcnow().strftime('%Y-%m-%d')
   destinationName = os.path.dirname(localLocation)+'/GASP.complete'
   if os.path.exists(destinationName):
       print("The folder does exist")
@@ -241,7 +241,7 @@ def gzExtractor(gzLocation):
 def getLastDaysData(dataToolsPath,localLocation):
     sliceToolPath=dataToolsPath +  'slice-date-range/split-into-dates.py'
     destinationName = os.path.dirname(localLocation)+'/GASP.complete'
-    os.system('python3 ' +sliceToolPath +' -n 10 '+destinationName )
+    os.system('python3 ' +sliceToolPath +' -n 3 '+destinationName )
     csvLocation= destinationName+'/dates/'
     fileDeleter(csvLocation,'.csv')
     csvList = getLocationList(csvLocation, suffix=".csv.gz")

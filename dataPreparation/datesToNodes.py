@@ -26,16 +26,16 @@ def main(argv):
             datesDirectory = arg
             nodeList = ['001e0610c040','001e0610c2e5','001e0610c2dd',\
             '001e0610c5fa','001e0610c069','001e0610c0ea','001e0610c219',\
-             '001e0610c042''001e0610c776','001e0610c0ef','001e0610c762',\
-              '001e0610c2eb','001e0610c2e9','001e0610c2e3','001e0610c42e',\
-                '001e0610c2df','001e0610c429','001e0610c06b','001e0610c2db',\
-                  '001e0610c6f4','001e0610c2d7','001e0610c2e1','001e0610c2ed',\
-                    '001e0610c2a9','001e0610c046','001e0610c044','001e0610c2e7',\
-                       '001e0610c03e','001e0610c5ed','001e0610c216']
+              '001e0610c042','001e0610c776','001e0610c0ef','001e0610c762',\
+                '001e0610c2eb','001e0610c2e9','001e0610c2e3','001e0610c42e',\
+                  '001e0610c2df','001e0610c429','001e0610c06b','001e0610c2db',\
+                    '001e0610c6f4','001e0610c2d7','001e0610c2e1','001e0610c2ed',\
+                      '001e0610c2a9','001e0610c046','001e0610c044','001e0610c2e7',\
+                        '001e0610c03e','001e0610c5ed','001e0610c216']
 
             # start = time.time()
             print('Listing Files')
-            dateList = getCSVList(datesDirectory)
+            dateList = getLocationList(datesDirectory)
             print(dateList)
             [yearsList,monthsList]=getYearMonthUnique(dateList)
             createFolders(nodeList,yearsList,monthsList)
@@ -48,7 +48,8 @@ def main(argv):
                     finish = time.time()
                     print("Time elapsed: " + str(finish - start))
 
-def getCSVList(datesDirectory, suffix=".csv"):
+
+def getLocationList(datesDirectory, suffix=".csv"):
     filenames = listdir('../../../data/uglyNodes/completeDataSet/'+datesDirectory+'/dates')
     dateList = [ filename for filename in filenames if filename.endswith( suffix ) ]
     return sorted(dateList)
@@ -70,7 +71,6 @@ def createDirectory(dirName):
         print("Directory " , dirName ,  " Created ")
     else:
         print("Directory " , dirName ,  " already exists")
-
 
 def getDateData(currentCSV):
     nameOnly = currentCSV.split('.')
@@ -115,9 +115,6 @@ def nodeSplit(nodeID,datesDirectory,CurrentDate):
     else:
         print("No Data for Node: "+nodeID + " on " + CurrentDate.split('.')[0])
         # return [ filename for filename in filenames if filename.endswith( suffix ) ]
-
-
-
 
 
 if __name__ == "__main__":
