@@ -26,6 +26,7 @@ daysOnly = spectrometorData.dateTime;
 daysOnly.Hour(:) =0;
 daysOnly.Minute(:) =0;
 daysOnly.Second(:)=0; 
+
 for dayRange=1:length(timeRange)
     
     year =  string(timeRange.Year(dayRange));
