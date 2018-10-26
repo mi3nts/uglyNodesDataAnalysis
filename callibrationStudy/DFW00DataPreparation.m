@@ -24,8 +24,8 @@ timeUnit = 20 ;
 spectometorFNPrefix = 'Spectrometor_Edited_6';
 spectrometorData = getSpectrometorData(spectometorFNPrefix,tStart,tEnd);
 
-%% Node Data
-tEnd   = datetime(2018,04,28);
+% %% Node Data
+% tEnd   = datetime(2018,04,28);
 
 
 

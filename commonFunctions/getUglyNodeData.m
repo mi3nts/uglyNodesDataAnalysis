@@ -18,5 +18,5 @@ for dayRange = 1: length(timeRange)
 end
 
 uglyNodeData(uglyNodeData.opc_n2_bin15>1000,:) = [];
-
+uglyNodeData(uglyNodeData.opc_n2_bin0==0,:) = [];
 end

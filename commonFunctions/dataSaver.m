@@ -4,6 +4,7 @@ function [] = dataSaver(nodeID,fileName,variableName,path,inVariable)
 varaible =  inVariable;
 eval(strcat(variableName,'=varaible;'));
 saveName = strcat("../../../data/",path,"/",nodeID,"/",nodeID,fileName,".mat");
+createDirectory(saveName);
 save(saveName,variableName);
 end
 

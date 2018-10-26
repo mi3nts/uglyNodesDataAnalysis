@@ -27,7 +27,7 @@ set(plot2,'Marker','.',...
     'LineStyle','none','Color',[0 1 0]);
 
 
-yl=strcat(yLabel)
+yl=strcat(yLabel);
 ylabel(yl,'FontWeight','bold','FontSize',20);
 
 % Create xlabel
@@ -38,7 +38,7 @@ tl= string(titlePre) +  newline + ...
      strcat(nodeID,...
     " (",...
     estimator,...
-    ")")
+    ")");
 
 
 
@@ -48,12 +48,15 @@ set(legend1,'Location','northwest');
 
 title(tl,'FontWeight','bold','FontSize',22);
 
+
 Fig_name = strcat('../../../data/plots/',nodeID,'/',saveNamePre,nodeID,...
-           'Time2x.jpg')
+           'Time2x.jpg');
+createDirectory(Fig_name);
 saveas(figureAll,char(Fig_name));
 
 Fig_name = strcat('../../../data/plots/',nodeID,'/',saveNamePre,nodeID,...
-           'Time2x.fig')
+           'Time2x.fig');
+createDirectory(Fig_name);
 saveas(figureAll,char(Fig_name));
 close all 
 end
