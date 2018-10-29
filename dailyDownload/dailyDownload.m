@@ -3,7 +3,7 @@ clc
 clear all
 close all 
 
-timeRange = sort(datetime('today') - caldays(1:1:3))
+timeRange = sort(datetime('today') - caldays(1:1:7))
 
 nodeIDs =  ["001e0610c040","001e0610c2e5","001e0610c2dd",...
     "001e0610c5fa","001e0610c069","001e0610c0ea","001e0610c219",...

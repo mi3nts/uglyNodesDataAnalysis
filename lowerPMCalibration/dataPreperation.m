@@ -21,6 +21,12 @@ spectrometorData = getSpectrometorData(spectometorFNPrefix,tStart,tEnd);
 
 uglyNodeData = getUglyNodeData(tStart,tEnd,nodeID);
 
+
+
+
+
+
+
 % %% Mixing Data 
 % mixedData = tableMixer(spectrometorData,uglyNodeData);
 % 

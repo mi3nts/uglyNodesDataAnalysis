@@ -7,7 +7,7 @@ import datetime
 import csv
 from os import listdir
 import shutil
-
+from os import walk
 
 def main():
 
@@ -15,8 +15,9 @@ def main():
 
     url = 'https://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/GASP.complete.latest.tar'
     dataFolder    = '../../../data/'
-    localLocation = dataFolder + 'uglyNodes/dailyDownload/GASP.complete.latest.tar'
-    datesLocation = dataFolder + 'uglyNodes/dailyDownload/GASP.complete/dates/'
+    dailyDownloadLocation = dataFolder + 'uglyNodes/dailyDownload/'
+    localLocation =  dailyDownloadLocation+'GASP.complete.latest.tar'
+    datesLocation =  dailyDownloadLocation+'GASP.complete/dates/'
     dataToolsPath = dataFolder + 'uglyNodes/completeDataSet/data-tools-master/'
 
     nodeList = ['001e0610c040','001e0610c2e5','001e0610c2dd',\
@@ -51,18 +52,22 @@ def main():
              'tsys01_temperature',\
              ])
 
+
+    start = time.time()
+    dataFolderCleaner(dailyDownloadLocation)
+    timeTaken('Data Cleaned in ',start)
+
     start = time.time()
     downloadFile(url,localLocation)
     timeTaken('Data Downloaded in ',start)
-
+    # #
     start = time.time()
-    unzipFile(localLocation)
+    unzipFile(localLocation,dailyDownloadLocation)
     timeTaken('Data Extracted in ',start)
 
     start = time.time()
     dateList = getLastDaysData(dataToolsPath,localLocation)
     timeTaken('latest data cropped in ',start)
-    # dateList = sorted(getLocationList(datesLocation))
 
     start = time.time()
     splitAlldates2Nodes(nodeList,dateList,datesLocation)
@@ -76,6 +81,37 @@ def main():
     writeAllOrganizedData(nodeList,dateList,dataFolder,keys)
     timeTaken('Data Organized in ',start)
 
+def gainDirectoryInfo(dailyDownloadLocation):
+    directoryPaths = []
+    directoryNames = []
+    directoryFiles = []
+    for (dirpath, dirnames, filenames) in walk(dailyDownloadLocation):
+        directoryPaths.extend(dirpath)
+        directoryNames.extend(dirnames)
+        directoryFiles.extend(filenames)
+
+    return directoryPaths,directoryNames,directoryFiles;
+
+
+def unzipFile(localLocation,dailyDownloadLocation):
+  unzipper(localLocation)
+  directoryPaths,directoryNames,directoryFiles=  gainDirectoryInfo(dailyDownloadLocation)
+  sourceName = dailyDownloadLocation + directoryNames[0]
+  destinationName = os.path.dirname(localLocation)+'/GASP.complete'
+  if os.path.exists(destinationName):
+      print("The folder does exist")
+      shutil.rmtree(destinationName)
+  else:
+      print("The folder does not exist")
+  os.rename(sourceName, destinationName)
+
+
+def gzExtractor(gzLocation):
+    os.system('gzip -f ' +gzLocation)
+
+def dataFolderCleaner(dailyDownloadLocation):
+    shutil.rmtree(dailyDownloadLocation)
+    os.makedirs(dailyDownloadLocation)
 
 def writeAllOrganizedData(nodeList,dateList,dataFolder,keys):
     for nodeID in nodeList:
@@ -221,27 +257,10 @@ def unzipper(localLocation):
   tar.extractall(os.path.dirname(localLocation))
   tar.close()
 
-
-def unzipFile(localLocation):
-  unzipper(localLocation)
-  sourceName = os.path.dirname(localLocation)+'/GASP.complete.'+datetime.datetime.utcnow().strftime('%Y-%m-%d')
-  destinationName = os.path.dirname(localLocation)+'/GASP.complete'
-  if os.path.exists(destinationName):
-      print("The folder does exist")
-      shutil.rmtree(destinationName)
-  else:
-      print("The folder does not exist")
-  os.rename(sourceName, destinationName)
-
-
-def gzExtractor(gzLocation):
-    os.system('gzip -f ' +gzLocation)
-
-
 def getLastDaysData(dataToolsPath,localLocation):
     sliceToolPath=dataToolsPath +  'slice-date-range/split-into-dates.py'
     destinationName = os.path.dirname(localLocation)+'/GASP.complete'
-    os.system('python3 ' +sliceToolPath +' -n 3 '+destinationName )
+    os.system('python3 ' +sliceToolPath +' -n 5 '+destinationName )
     csvLocation= destinationName+'/dates/'
     fileDeleter(csvLocation,'.csv')
     csvList = getLocationList(csvLocation, suffix=".csv.gz")
