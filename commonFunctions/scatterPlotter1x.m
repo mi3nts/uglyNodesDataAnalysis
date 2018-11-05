@@ -1,4 +1,4 @@
-function Results= scatterPlotter1x(xData,yData,xLimit,yLimit,xLabel,yLabel,nodeID,estimator,titlePre,saveNamePre,dataFolder)
+function Results= scatterPlotter1x(xData,yData,xLimit,yLimit,xLabel,yLabel,nodeID,estimator,label,titlePre,saveNamePre,dataFolder)
 
 
 %% Individual Figure for All the Data Uncalibrated  
@@ -81,12 +81,12 @@ legend1 = legend('show');
 set(legend1,'Location','northwest');
 
 
-Fig_name = strcat(dataFolder,'/plots/',nodeID,'/',saveNamePre,nodeID,...
+Fig_name = strcat(dataFolder,'/plots/',nodeID,'/',label,saveNamePre,nodeID,...
            'Scatter.jpg');
 createDirectory(Fig_name);
 saveas(figure_All_Data,char(Fig_name));
 
-Fig_name = strcat(dataFolder,'/plots/',nodeID,'/',saveNamePre,nodeID,...
+Fig_name = strcat(dataFolder,'/plots/',nodeID,'/',label,saveNamePre,nodeID,...
            'Scatter.fig');
 saveas(figure_All_Data,char(Fig_name));
 

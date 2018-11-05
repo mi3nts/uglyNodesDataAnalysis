@@ -18,20 +18,17 @@ def main():
 
     print('Beginning GASP Data Download')
 
-    url = 'https://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/GASP.complete.latest.tar'
+    url = 'https://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/GASP.complete.recent.tar'
     # url = 'https://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/GASP.complete.recent.tar'
     dataFolder    = '../../../data/'
-    subFolder  = dataFolder + "uglyNodes/"
-    dataToolsPath = subFolder + 'data-tools-master/'
-    dailyDownloadLocation =     subFolder+ 'DailyDownload/'
+    dataToolsPath = dataFolder + 'uglyNodes/data-tools-master/'
+    sendPathAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/Air/'
+    sendPathLabAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/LabAir/'
+
+    subFolder  = dataFolder + "uglyNodesRecent/"
+    dailyDownloadLocation =     subFolder+ 'recentDownload/'
     localLocation =  dailyDownloadLocation+'GASP.complete.latest.tar'
     datesLocation =  dailyDownloadLocation+'GASP.complete/dates/'
-
-    # sendPathAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/Air/'
-    # sendPathLabAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/LabAir/'
-
-    sendPathAir    =  subFolder + '/Air/'
-    sendPathLabAir =  subFolder + '/LabAir/'
 
     nodeListAir = ['001e0610c040','001e0610c2e5']
 
@@ -79,7 +76,7 @@ def main():
              'tsys01_temperature',\
              ])
 
-    #
+
     start = time.time()
     dataFolderCleaner(dailyDownloadLocation)
     timeTaken('Data Cleaned in ',start)
@@ -102,7 +99,7 @@ def main():
 
 
     timeTaken('Nodes split in ',start)
-
+    #
     start = time.time()
     writeAllOrganizedData(nodeListAir,dateList,subFolder,keys,sendPathAir)
     writeAllOrganizedData(nodeListLabAir,dateList,subFolder,keys,sendPathLabAir)
@@ -159,7 +156,7 @@ def gainDirectoryInfo(dailyDownloadLocation):
 def getLastDaysData(dataToolsPath,localLocation):
     sliceToolPath=dataToolsPath +  'slice-date-range/split-into-dates.py'
     destinationName = os.path.dirname(localLocation)+'/GASP.complete'
-    os.system('python3 ' +sliceToolPath +' -n 2 '+destinationName )
+    os.system('python3 ' +sliceToolPath +' '+destinationName )
     csvLocation= destinationName+'/dates/'
     fileDeleter(csvLocation,'.csv')
     csvList = getLocationList(csvLocation, suffix=".csv.gz")
@@ -301,12 +298,14 @@ def csvWriter(writePath,organizedData,keys):
 
 def writeAllOrganizedData(nodeList,dateList,subFolder,keys,sendPath):
     for nodeID in nodeList:
-        for dates in dateList:
-            currentPath = getPathforUglyNode(nodeID,dates,subFolder)
-            if os.path.isfile(currentPath):
-                reader = getListDictionaryFromPath(currentPath)
-                organizedData = getOrganizedData(reader)
-                writeOrganizedCSV(nodeID,dates,organizedData,subFolder,keys,sendPath)
+        datesSorted = sorted(dateList);
+        dates = datesSorted[-1]
+        currentPath = getPathforUglyNode(nodeID,dates,subFolder)
+
+        if os.path.isfile(currentPath):
+            reader = getListDictionaryFromPath(currentPath)
+            organizedData = getOrganizedData(reader)
+            writeOrganizedCSV(nodeID,dates,organizedData,subFolder,keys,sendPath)
             # else:
             #     print("No data for" + currentPath )
 
@@ -373,6 +372,9 @@ def getOrganizedData(reader):
 
     return organizedData
 
+
+
+
 def writeOrganizedCSV(nodeID,dates,organizedData,subFolder,keys,sendPath):
     [year,month,day] = getDateData(dates)
     writePath       = subFolder +nodeID+'/'+year+'/'+month + '/'+ nodeID + '-'+ year+'-'+month+'-'+day+'-Organized.csv'
@@ -382,8 +384,14 @@ def writeOrganizedCSV(nodeID,dates,organizedData,subFolder,keys,sendPath):
     csvWriter(writePath,organizedData,keys)
     sendCopy(writePath,sendPathUpdated)
 
+
+
+
 def timeTaken(message,start):
     print(message+str(time.time()-start)+' Seconds')
+
+
+###########################
 
 
 def gzExtractor(gzLocation):
@@ -398,6 +406,12 @@ def getYearMonthUnique(dateList):
         years.add(dateData[0])
         months.add(dateData[1])
     return list(years),list(months);
+
+
+
+
+
+
 
 
 if __name__ == "__main__":

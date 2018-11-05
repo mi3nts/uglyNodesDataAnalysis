@@ -1,4 +1,4 @@
-function [] = timePlotter2x(times,Data1,Data2,yLabel,displayName1,displayName2,nodeID,estimator,titlePre,saveNamePre)
+function [] = timePlotter2x(times,Data1,Data2,yLabel,displayName1,displayName2,nodeID,estimator,label,titlePre,saveNamePre)
 
 %% Individual Figure for All the Data Uncalibrated  
 figureAll = figure(...
@@ -49,12 +49,12 @@ set(legend1,'Location','northwest');
 title(tl,'FontWeight','bold','FontSize',22);
 
 
-Fig_name = strcat('../../../data/plots/',nodeID,'/',saveNamePre,nodeID,...
+Fig_name = strcat('../../../data/plots/',nodeID,'/',label,saveNamePre,nodeID,...
            'Time2x.jpg');
 createDirectory(Fig_name);
 saveas(figureAll,char(Fig_name));
 
-Fig_name = strcat('../../../data/plots/',nodeID,'/',saveNamePre,nodeID,...
+Fig_name = strcat('../../../data/plots/',nodeID,'/',label,saveNamePre,nodeID,...
            'Time2x.fig');
 createDirectory(Fig_name);
 saveas(figureAll,char(Fig_name));
