@@ -3,7 +3,7 @@ clc
 clear all
 close all 
 
-timeRange = sort(datetime('today') - caldays(1:1:10))
+timeRange = sort(datetime('today') - caldays(1:1:1000))
 
 nodeIDs =  ["001e0610c040","001e0610c2e5","001e0610c2dd",...
     "001e0610c5fa","001e0610c069","001e0610c0ea","001e0610c219",...
@@ -20,10 +20,10 @@ for nodeIndex = 1:length(nodeIDs)
     nodeID = nodeIDs(nodeIndex)
     
     for dayRange=1:length(timeRange)
-
-        year =  string(timeRange.Year(dayRange));
-        month = sprintf('%02s',string(timeRange.Month(dayRange)));
-        day   = sprintf('%02s',string(timeRange.Day(dayRange)));
+     
+        year =  string(timeRange.Year(dayRange))
+        month = sprintf('%02s',string(timeRange.Month(dayRange)))
+        day   = sprintf('%02s',string(timeRange.Day(dayRange)))
 
         fileName = strcat(nodeID,"-",year,"-",month,"-",day,"-Organized.csv");
         filePath = strcat("../../../data/uglyNodes/",nodeID,"/",year,"/",month,"/",fileName);

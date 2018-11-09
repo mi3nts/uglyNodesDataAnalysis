@@ -1,8 +1,8 @@
 from shutil import copyfile
-
+import time
 
 import urllib.request
-import time
+
 import tarfile
 import os
 import datetime
@@ -22,13 +22,25 @@ def main():
     # url = 'https://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/GASP.complete.recent.tar'
     dataFolder    = '../../../data/'
     dataToolsPath = dataFolder + 'uglyNodes/data-tools-master/'
-    sendPathAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/Air/'
-    sendPathLabAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/LabAir/'
+    sendPathAir    = '/run/user/1000/gvfs/smb-share:server=djlnas2.local,share=lakitha/MINTS/Recent/Air/'
+    sendPathLabAir = '/run/user/1000/gvfs/smb-share:server=djlnas2.local,share=lakitha/MINTS/Recent/LabAir/'
 
     subFolder  = dataFolder + "uglyNodesRecent/"
     dailyDownloadLocation =     subFolder+ 'recentDownload/'
     localLocation =  dailyDownloadLocation+'GASP.complete.latest.tar'
     datesLocation =  dailyDownloadLocation+'GASP.complete/dates/'
+
+
+
+    # nodeList = ['001e0610c040']
+    # ,'001e0610c2e5','001e0610c2dd',\
+    # '001e0610c5fa','001e0610c069','001e0610c0ea','001e0610c219',\
+    # '001e0610c042','001e0610c776','001e0610c0ef','001e0610c762',\
+    # '001e0610c2eb','001e0610c2e9','001e0610c2e3','001e0610c42e',\
+    # '001e0610c2df','001e0610c429','001e0610c06b','001e0610c2db',\
+    # '001e0610c6f4','001e0610c2d7','001e0610c2e1','001e0610c2ed',\
+    # '001e0610c2a9','001e0610c046','001e0610c044','001e0610c2e7',\
+    # '001e0610c03e','001e0610c5ed','001e0610c216']
 
     nodeListAir = ['001e0610c040','001e0610c2e5']
 
@@ -41,15 +53,6 @@ def main():
     '001e0610c2a9','001e0610c046','001e0610c044','001e0610c2e7',\
     '001e0610c03e','001e0610c5ed','001e0610c216']
 
-    # nodeList = ['001e0610c040']
-    # ,'001e0610c2e5','001e0610c2dd',\
-    # '001e0610c5fa','001e0610c069','001e0610c0ea','001e0610c219',\
-    # '001e0610c042','001e0610c776','001e0610c0ef','001e0610c762',\
-    # '001e0610c2eb','001e0610c2e9','001e0610c2e3','001e0610c42e',\
-    # '001e0610c2df','001e0610c429','001e0610c06b','001e0610c2db',\
-    # '001e0610c6f4','001e0610c2d7','001e0610c2e1','001e0610c2ed',\
-    # '001e0610c2a9','001e0610c046','001e0610c044','001e0610c2e7',\
-    # '001e0610c03e','001e0610c5ed','001e0610c216']
 
 
 
@@ -95,6 +98,8 @@ def main():
     #
     start = time.time()
     splitAllDates2NodeSplitRecent(nodeListAir,dateList,datesLocation,subFolder,sendPathAir)
+
+    print("For Lab Nodes")
     splitAllDates2NodeSplitRecent(nodeListLabAir,dateList,datesLocation,subFolder,sendPathLabAir)
 
 
@@ -105,6 +110,36 @@ def main():
     writeAllOrganizedData(nodeListLabAir,dateList,subFolder,keys,sendPathLabAir)
 
     timeTaken('Data Organized in ',start)
+
+
+def correctionsIn(nodeID,reader):
+
+    if nodeID == '001e0610c040':
+        readerOut = updateListOfDictionaries(reader,'gps_altitude','224.9 ')
+        readerOut = updateListOfDictionaries(reader,'gps_latitude','35.0427')
+        readerOut = updateListOfDictionaries(reader,'gps_longitude','-85.3057')
+        return readerOut
+
+    if nodeID == '001e0610c2e5':
+        readerOut = updateListOfDictionaries(reader,'gps_altitude','219 ')
+        readerOut = updateListOfDictionaries(reader,'gps_latitude','33.027222')
+        readerOut = updateListOfDictionaries(reader,'gps_longitude','-96.750639')
+        return readerOut
+
+    else :
+        readerOut = updateListOfDictionaries(reader,'gps_altitude','226 ')
+        readerOut = updateListOfDictionaries(reader,'gps_latitude','32.99193634570803')
+        readerOut = updateListOfDictionaries(reader,'gps_longitude','-96.757809519767')
+        return readerOut
+
+
+
+
+def updateListOfDictionaries(listIn,headerIn,valueIn):
+    for d in listIn:
+        d[headerIn] = valueIn
+    return listIn
+
 
 
 
@@ -122,6 +157,8 @@ def directoryCheck(outputPath):
     directoryIn = os.path.dirname(outputPath)
     if not os.path.exists(directoryIn):
         os.makedirs(directoryIn)
+
+
 
 def unzipFile(localLocation,dailyDownloadLocation):
   destinationName = os.path.dirname(localLocation)+'/GASP.complete'
@@ -215,20 +252,23 @@ def splitAllDates2NodeSplitRecent(nodeList,dateList,datesLocation,subFolder,send
 def nodeSplitForRecent(nodeID,datesDirectory,CurrentDate,subFolder,sendPath):
     inputPath  = datesDirectory + CurrentDate
     [reader,keys] = getListDictionary(inputPath,nodeID)
+
     if len(reader)>0:
+        print(nodeID)
         dateInfo  = getDateData(CurrentDate)
         year  = dateInfo[0]
         month = dateInfo[1]
         day   = dateInfo[2]
         csvName = nodeID+'-'+year+'-'+month+'-'+day+'.csv'
         seekPath = subFolder+nodeID+'/'+year+'/'+month+'/'+csvName
-        sendPathUpdated  = sendPath+nodeID+'/'+year+'/'+month+'/'+csvName
+        sendPathUpdated  = sendPath + nodeID+'/'+year+'/'+month+'/'+csvName
         print("Writing CSV for Node: "+nodeID + " for " + CurrentDate.split('.')[0])
         # Append the new Data into the current CSV if logged Data Exists
         if(os.path.exists(seekPath)):
             loggedData =  getListDictionaryFromPathAsIs(seekPath)
             merged  =  getUniqueList(reader + loggedData)
             mergedSorted = sorted(merged, key=itemgetter('timestamp'))
+
             writeCSV(mergedSorted,keys,seekPath)
 
         else:
@@ -236,14 +276,38 @@ def nodeSplitForRecent(nodeID,datesDirectory,CurrentDate,subFolder,sendPath):
 
         sendCopy(seekPath,sendPathUpdated)
 
-def sendCopy(seekPath,sendPath):
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def sendCopy(seekPath,sendPath):
     fileNameSend  = os.path.basename(seekPath)
     directorySend = os.path.dirname(sendPath)
     sendPathAddress = os.path.join(directorySend,fileNameSend)
     directoryCheck(sendPathAddress)
     # fileDeleterFromPath(sendPathAddress)
-    copyfile(seekPath,    sendPathAddress)
+    try:
+        copyfile(seekPath,sendPathAddress)
+    except IOError as e:
+        print("Error: %s - Trying Again" % e)
+
+    try:
+        copyfile(seekPath,sendPathAddress)
+    except IOError as e:
+        print("Unable to copy file. %s" % e)
+
+
 
 
 
@@ -291,10 +355,13 @@ def writeCSV(reader,keys,outputPath):
 
 
 def csvWriter(writePath,organizedData,keys):
-    with open(writePath,'w') as output_file:
-        writer = csv.DictWriter(output_file, fieldnames=keys)
-        writer.writeheader()
-        writer.writerows(organizedData)
+
+    if len(organizedData)>0:
+        print("Write Path:"+writePath)
+        with open(writePath,'w') as output_file:
+            writer = csv.DictWriter(output_file, fieldnames=keys)
+            writer.writeheader()
+            writer.writerows(organizedData)
 
 def writeAllOrganizedData(nodeList,dateList,subFolder,keys,sendPath):
     for nodeID in nodeList:
@@ -318,7 +385,7 @@ def getPathforUglyNode(nodeID,dates,subFolder):
 
 def getListDictionaryFromPath(dirPath):
 
-    print('Reading from :' + dirPath)
+    # print('Reading from :' + dirPath)
     reader = csv.DictReader(open(dirPath))
     reader = list(reader)
 
@@ -380,8 +447,8 @@ def writeOrganizedCSV(nodeID,dates,organizedData,subFolder,keys,sendPath):
     writePath       = subFolder +nodeID+'/'+year+'/'+month + '/'+ nodeID + '-'+ year+'-'+month+'-'+day+'-Organized.csv'
     sendPathUpdated = sendPath + nodeID+'/'+year+'/'+month + '/'+ nodeID + '-'+ year+'-'+month+'-'+day+'-Organized.csv'
     directoryCheck(writePath)
-
-    csvWriter(writePath,organizedData,keys)
+    organizedDataGPS = correctionsIn(nodeID,organizedData)
+    csvWriter(writePath,organizedDataGPS,keys)
     sendCopy(writePath,sendPathUpdated)
 
 

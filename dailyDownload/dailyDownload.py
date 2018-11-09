@@ -1,5 +1,5 @@
 from shutil import copyfile
-
+from datetime import date
 
 import urllib.request
 import time
@@ -30,8 +30,13 @@ def main():
     # sendPathAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/Air/'
     # sendPathLabAir = '/run/user/1000/gvfs/afp-volume:host=DJLNAS2.local,user=lakitha,volume=Lakitha/MINTS/Recent/LabAir/'
 
-    sendPathAir    =  subFolder + '/Air/'
-    sendPathLabAir =  subFolder + '/LabAir/'
+    # sendPathAir    =  subFolder + '/Air/'
+    # sendPathLabAir =  subFolder + '/LabAir/'
+
+
+    sendPathAir    = '/run/user/1000/gvfs/smb-share:server=djlnas2.local,share=lakitha/MINTS/Air/'
+    sendPathLabAir = '/run/user/1000/gvfs/smb-share:server=djlnas2.local,share=lakitha/MINTS/LabAir/'
+
 
     nodeListAir = ['001e0610c040','001e0610c2e5']
 
@@ -53,8 +58,6 @@ def main():
     # '001e0610c6f4','001e0610c2d7','001e0610c2e1','001e0610c2ed',\
     # '001e0610c2a9','001e0610c046','001e0610c044','001e0610c2e7',\
     # '001e0610c03e','001e0610c5ed','001e0610c216']
-
-
 
     keys = (['dateTime',\
              'opc_n2_bin0','opc_n2_bin1','opc_n2_bin2','opc_n2_bin3','opc_n2_bin4','opc_n2_bin5',\
@@ -108,6 +111,37 @@ def main():
     writeAllOrganizedData(nodeListLabAir,dateList,subFolder,keys,sendPathLabAir)
 
     timeTaken('Data Organized in ',start)
+
+
+
+
+def correctionsIn(nodeID,reader):
+
+    if nodeID == '001e0610c040':
+        readerOut = updateListOfDictionaries(reader,'gps_altitude','224.9 ')
+        readerOut = updateListOfDictionaries(reader,'gps_latitude','35.0427')
+        readerOut = updateListOfDictionaries(reader,'gps_longitude','-85.3057')
+        return readerOut
+
+    if nodeID == '001e0610c2e5':
+        readerOut = updateListOfDictionaries(reader,'gps_altitude','219 ')
+        readerOut = updateListOfDictionaries(reader,'gps_latitude','33.027222')
+        readerOut = updateListOfDictionaries(reader,'gps_longitude','-96.750639')
+        return readerOut
+
+    else :
+        readerOut = updateListOfDictionaries(reader,'gps_altitude','226 ')
+        readerOut = updateListOfDictionaries(reader,'gps_latitude','32.99193634570803')
+        readerOut = updateListOfDictionaries(reader,'gps_longitude','-96.757809519767')
+        return readerOut
+
+
+
+
+def updateListOfDictionaries(listIn,headerIn,valueIn):
+    for d in listIn:
+        d[headerIn] = valueIn
+    return listIn
 
 
 
@@ -246,10 +280,15 @@ def sendCopy(seekPath,sendPath):
     sendPathAddress = os.path.join(directorySend,fileNameSend)
     directoryCheck(sendPathAddress)
     # fileDeleterFromPath(sendPathAddress)
-    copyfile(seekPath,    sendPathAddress)
 
-
-
+    try:
+        copyfile(seekPath,    sendPathAddress)
+    except IOError as e:
+        print("Error: %s - Trying Again" % e)
+    try:
+        copyfile(seekPath,sendPathAddress)
+    except IOError as e:
+        print("Unable to copy file. %s" % e)
 
 
 
@@ -294,10 +333,11 @@ def writeCSV(reader,keys,outputPath):
 
 
 def csvWriter(writePath,organizedData,keys):
-    with open(writePath,'w') as output_file:
-        writer = csv.DictWriter(output_file, fieldnames=keys)
-        writer.writeheader()
-        writer.writerows(organizedData)
+    if len(organizedData)>0:
+        with open(writePath,'w') as output_file:
+            writer = csv.DictWriter(output_file, fieldnames=keys)
+            writer.writeheader()
+            writer.writerows(organizedData)
 
 def writeAllOrganizedData(nodeList,dateList,subFolder,keys,sendPath):
     for nodeID in nodeList:
@@ -378,8 +418,9 @@ def writeOrganizedCSV(nodeID,dates,organizedData,subFolder,keys,sendPath):
     writePath       = subFolder +nodeID+'/'+year+'/'+month + '/'+ nodeID + '-'+ year+'-'+month+'-'+day+'-Organized.csv'
     sendPathUpdated = sendPath + nodeID+'/'+year+'/'+month + '/'+ nodeID + '-'+ year+'-'+month+'-'+day+'-Organized.csv'
     directoryCheck(writePath)
-
-    csvWriter(writePath,organizedData,keys)
+#   Apply the correction
+    organizedDataGPS = correctionsIn(nodeID,organizedData)
+    csvWriter(writePath,organizedDataGPS,keys)
     sendCopy(writePath,sendPathUpdated)
 
 def timeTaken(message,start):
